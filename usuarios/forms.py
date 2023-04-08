@@ -79,7 +79,17 @@ class CadastroForms(forms.Form):
 
         if nome :
             nome = nome.strip()
-            if '' in nome:
+            if ' ' in nome:
                 raise forms.ValidationError('Por favor, retire os espaços em branco do nome')
             else:
                 return nome
+            
+    def clean_senha2(self):
+        senha_1 = self.cleaned_data.get('senha1')
+        senha_2 = self.cleaned_data.get('senha2')
+
+        if senha_1 and senha_2:
+            if senha_1 != senha_2:
+                raise forms.ValidationError('Senhas não são iguais')
+            else:
+                return senha_2        
