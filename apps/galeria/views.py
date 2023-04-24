@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from apps.galeria.models import Fotografia
 from django.contrib import messages
+from apps.galeria.forms import FotografiaForms
 
     # 2:{"nome": "Gláxia NGC 1079",
     #    "legenda": "nasa.org / NASA / Hubble"},
@@ -32,7 +33,16 @@ def buscar(request):
     return render(request, 'galeria/buscar.html', {"cards": fotografias})
 
 def nova_imagem(request):
-    return render(request, 'galeria/nova_imagem.html')
+    if not request.user.is_authenticated:
+        messages.error(request, 'Usuário não logado')
+        return redirect ('login')  
+    form = FotografiaForms(request.POST)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Fotografia cadastrada com sucesso!')
+        return redirect('index')
+
+    return render(request, 'galeria/nova_imagem.html', {'form': form})
 
 def editar_imagem(request):
     pass
