@@ -36,11 +36,14 @@ def nova_imagem(request):
     if not request.user.is_authenticated:
         messages.error(request, 'Usuário não logado')
         return redirect ('login')  
-    form = FotografiaForms(request.POST)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Fotografia cadastrada com sucesso!')
-        return redirect('index')
+    
+    form = FotografiaForms
+    if request.method == 'POST':
+        form = FotografiaForms(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Fotografia cadastrada com sucesso!')
+            return redirect('index')
 
     return render(request, 'galeria/nova_imagem.html', {'form': form})
 
